@@ -4,9 +4,9 @@ import yajs from 'yajson-stream';
 import { Promise } from 'bluebird';
 import { isObject, isArray } from 'lodash';
 
-export default (stream, path, onNode) =>
+export default (stream, path, onNode, options) =>
     new Promise((resolve, reject) => {
-        const s = stream.pipe(yajs(path)).
+        const s = stream.pipe(yajs(path, options)).
             on('data', (data) => {
                 try {
                     populatePathMetadata(data.value, data.path);

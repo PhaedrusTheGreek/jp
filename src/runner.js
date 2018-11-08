@@ -7,7 +7,7 @@ import requireDir from 'require-dir';
 import { createReadStream } from 'fs';
 import { resolve, dirname } from 'path';
 
-import { isString, isEmpty } from 'lodash';
+import { isFunction, isEmpty } from 'lodash';
 
 export class ScriptRunner {
 
@@ -21,14 +21,15 @@ export class ScriptRunner {
             requireDir: requireDir,
             run: (command, input) => this._run(command, input),
             from: path => createReadStream(resolve(process.cwd(), path)),
-            select: (path, input) => {
-                if (!input && !isString(path)) {
+            select: (path, input, options) => {
+                if (isFunction(path)) {
+                    options = input;
                     input = path;
                     path = null;
                 }
                 path = path || '$';
                 path = path[0] != '$' ? `$${path}` : path;
-                return filter(input || this._input, path);
+                return filter(input || this._input, path, options);
             }
         }, this._global);
     }
